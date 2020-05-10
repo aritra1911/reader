@@ -1,5 +1,5 @@
 from . import app
-from src.read_file import get_file_content
+from .read_file import get_file_content
 
 @app.route("/")
 def index():
