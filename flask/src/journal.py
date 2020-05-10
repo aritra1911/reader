@@ -1,7 +1,9 @@
 import re
 
+
 class FileParsingError(Exception):
     pass
+
 
 class JournalEntry:
     def __init__(self, filename=None):
@@ -16,14 +18,18 @@ class JournalEntry:
     def get_title(self):
         return self.title
 
+    def get_paragraphs(self):
+        return self.paragraphs
+
     def read_file(self):
         with open(self.filename, "r") as file:
             self.file_content = file.read()
 
     def parse(self):
         lines = self.file_content.splitlines()
+        lines.append('')
 
-        if len(lines) == 0:
+        if not len(lines):
             raise FileParsingError("Empty file supplied")
 
         title = lines.pop(0)
@@ -40,7 +46,7 @@ class JournalEntry:
         if title_regex.match(title) is None:
             raise FileParsingError(
                 "Titles must be put in double quotation marks or begin with " +
-                "a hash(#) sign followed by a space character."
+                "a single hash(#) character followed by a space character."
             )
 
         # `title_regex.findall(title)` outputs a list of tuple(s). In this case
@@ -51,9 +57,25 @@ class JournalEntry:
         p_titles = title_regex.findall(title)[0]
         self.title = p_titles[0] if p_titles[0] != '' else p_titles[1]
 
-        # TODO, self.paragraphs is a list of line blocks.
-        self.paragraphs = lines
+        # `self.paragraphs` is a list of list(s) of line(s)
+        self.paragraphs = list()
+        paragraph = list()
+        for line in lines:
+            if not len(line):
+                if len(paragraph):
+                    self.paragraphs.append(paragraph)
+                    paragraph = list()
+            else:
+                paragraph.append(line)
+
 
 if __name__ == '__main__':
     entry = JournalEntry('sample.md')
-    print(entry.get_title())
+    print(entry.get_title(), end='\n\n')
+    print('[')
+    for paragraph in entry.get_paragraphs():
+        print('  [')
+        for line in paragraph:
+            print(f'    "{line}",')
+        print('  ],')
+    print(']')
