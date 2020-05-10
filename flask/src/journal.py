@@ -27,7 +27,7 @@ class JournalEntry:
 
     def parse(self):
         lines = self.file_content.splitlines()
-        lines.append('')
+        lines.append('')  # this is for later
 
         if not len(lines):
             raise FileParsingError("Empty file supplied")
@@ -58,6 +58,11 @@ class JournalEntry:
         self.title = p_titles[0] if p_titles[0] != '' else p_titles[1]
 
         # `self.paragraphs` is a list of list(s) of line(s)
+        # You'll notice the blank line at the end of `lines`. Encountering this
+        # will cause the last accumulated paragragraph to be appended. This is
+        # a supposed hack in order to save me a block of code repetition. You
+        # can see this blank line as the null terminating character of a string
+        # in C.
         self.paragraphs = list()
         paragraph = list()
         for line in lines:
