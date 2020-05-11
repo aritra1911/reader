@@ -1,6 +1,6 @@
 from . import app
-from .read_file import get_file_content
 from .journal import JournalEntry
+from flask import render_template
 
 PARENT_PATH = "/home/ray/codes/python/flask/reader/flask/src"
 SEP = '/'
@@ -9,18 +9,10 @@ SEP = '/'
 def index():
     return "HelloWorld!"
 
-@app.route("/file")
-def display_file():
-    return get_file_content()
-
 @app.route("/<filename>")
-def render_file(filename):
+def render_journal(filename):
     entry = JournalEntry(PARENT_PATH + SEP + filename)
-    res = "<h2>" + entry.get_title() + "</h2>"
-    for paragraph in entry.get_paragraphs():
-        res += "<p>"
-        for line in paragraph:
-            res += line + "<br />"
-        res += "</p>"
-
-    return res
+    return render_template("journal.html",
+        title=entry.get_title(),
+        body=entry.get_paragraphs(),
+    )
