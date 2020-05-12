@@ -1,9 +1,7 @@
 from . import app
 from .journal import JournalEntry
 from flask import render_template
-
-PARENT_PATH = "/home/ray/codes/python/flask/reader/flask/src"
-SEP = '/'
+from os import environ, sep
 
 @app.route("/")
 def index():
@@ -11,7 +9,7 @@ def index():
 
 @app.route("/<filename>")
 def render_journal(filename):
-    entry = JournalEntry(PARENT_PATH + SEP + filename)
+    entry = JournalEntry(environ['JOURNAL_PATH'] + sep + filename)
     return render_template("journal.html",
         title=entry.get_title(),
         body=entry.get_paragraphs(),
