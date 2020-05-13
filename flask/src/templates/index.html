@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}/{% endblock title %}
+{% block header %}/Index{% endblock header %}
+{% block content %}
+<ul>
+  {% for file in files %}
+  <li><a href="/{{ file }}">{{ file }}</a></li>
+  {% endfor %}
+</ul>
+{% endblock content %}
