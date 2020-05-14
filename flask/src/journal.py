@@ -21,9 +21,12 @@ class JournalEntry:
     def get_paragraphs(self):
         return self.paragraphs
 
-    def read_file(self):
+    def read_file(self, decrypt=None):
         with open(self.filename, "r") as file:
             self.file_content = file.read()
+
+        if decrypt is not None:
+            self.file_content = decrypt(self.file_content)
 
     def parse(self):
         lines = self.file_content.splitlines()
@@ -72,15 +75,3 @@ class JournalEntry:
                     paragraph = list()
             else:
                 paragraph.append(line)
-
-
-if __name__ == '__main__':
-    entry = JournalEntry('sample.md')
-    print(entry.get_title(), end='\n\n')
-    print('[')
-    for paragraph in entry.get_paragraphs():
-        print('  [')
-        for line in paragraph:
-            print(f'    "{line}",')
-        print('  ],')
-    print(']')
