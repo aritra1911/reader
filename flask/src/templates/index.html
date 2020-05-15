@@ -2,9 +2,9 @@
 {% block title %}/{% endblock title %}
 {% block header %}/Index{% endblock header %}
 {% block content %}
-<ul>
-  {% for file in files %}
-  <li><a href="/{{ file }}">{{ file }}</a></li>
-  {% endfor %}
-</ul>
+  <ul>
+    {% for file, title in journals_menu.items() %}
+      <li><a href="/{{ file }}">{{ file }}</a> -- {{ title }}</li>
+    {% endfor %}
+  </ul>
 {% endblock content %}
