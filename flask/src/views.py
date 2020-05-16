@@ -1,16 +1,11 @@
 from . import app
 from .journal import JournalEntry
-from .helpers import cycle
-from flask import render_template
+from .helpers import get_decrypt_func
+from flask import render_template, request, session, url_for, redirect
 from os import environ, sep, listdir, path
 
 # TODO, Move these to `constants.py`
 PATH = environ['JOURNAL_DIR']
-DECRYPT_FUNC = lambda msg: ''.join([
-    chr((ord(c) - (65 if not c.islower() else 97) - (ord(s) - 97)) % 26
-    + (65 if not c.islower() else 97)) if c.isalpha() else c
-    for c, s in zip(msg, cycle(msg, 'lollipop'))
-])
 
 @app.route("/")
 def index():
@@ -33,7 +28,11 @@ def index():
         # wasn't actually quicker than dumping it all at once into a variable.
         # I'm also using a single object here in order to cut down on some memory
         # usage.
-        entry.read_file(decrypt=DECRYPT_FUNC)
+        try:
+            key = session['key']
+        except KeyError:
+            key = None
+        entry.read_file(decrypt=get_decrypt_func(key))
         entry.parse()
         journals.update({file: entry.get_title()})
 
@@ -43,11 +42,26 @@ def index():
 def render_journal(filename):
     entry = JournalEntry()
     entry.set_filename(PATH + sep + filename)
-
-    entry.read_file(decrypt=DECRYPT_FUNC)
+    try:
+        key = session['key']
+    except KeyError:
+        key = None
+    entry.read_file(decrypt=get_decrypt_func(key))
     entry.parse()
 
     return render_template("journal.html",
         title=entry.get_title(),
         body=entry.get_paragraphs(),
     )
+
+@app.route('/enterkey', methods=('GET', 'POST'))
+def enter_key():
+    if request.method == 'POST':
+        key = request.form['key'].lower()
+        session.clear()
+        if key:
+            session['key'] = key
+
+        return redirect(url_for('index'))
+
+    return render_template('enterkey.html')
