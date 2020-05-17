@@ -4,11 +4,17 @@
  
   <head>
     <title>{% block title %}{% endblock title %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   </head>
 
   <body>
-    <h2>{% block header %}{% endblock header %}</h2>
-    {% block content %}{% endblock content %}
+    <div class="main">
+      <h2>{% block header %}{% endblock header %}</h2>
+      {% block content %}{% endblock content %}
+    </div>
+    <div class="sidenav">
+      {% block sidebarlinks %}{% endblock sidebarlinks %}
+    </div>
   </body>
 
 </html>
