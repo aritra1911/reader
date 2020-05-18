@@ -1,14 +1,28 @@
 body {
     font-family: "Georgia", serif;
+    background-color: #e3e0d4;
+    color: #0f0e0a;
+}
+
+a {
+    color: #138667;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #085e47;
+    text-decoration: underline;
+    text-decoration-style: dotted;
 }
 
 .sidenav {
     width: 160px;
     position: fixed;
     z-index: 1;
-    top: 160px;
+    top: 70px;
     right: 16px;
-    background: #eee;
+    background: #2f2c1e;
+    border-radius: 2px;
     overflow-x: hidden;
     padding: 8px 0;
 }
@@ -16,14 +30,16 @@ body {
 .sidenav a {
     padding: 6px 8px 6px 16px;
     text-decoration: none;
-    color: #2196f3
+    color: #c3bca2; 
+    display: block;
 }
 
 .sidenav a:hover {
-    color: #064579
+    color: #c7976b;
 }
 
 .main {
+    margin-top: 16px;
     margin-left: 16px;
 }
 

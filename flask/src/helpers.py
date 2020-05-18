@@ -1,8 +1,4 @@
-import re
-
 def cycle(ref, word):
-    word_regex = re.compile('[\W\d_]+')
-    word = word_regex.sub('', word)
     res = list()
     i = 0
     for c in ref:

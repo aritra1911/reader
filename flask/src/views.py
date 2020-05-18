@@ -3,8 +3,8 @@ from .journal import JournalEntry
 from .helpers import get_decrypt_func
 from flask import render_template, request, session, url_for, redirect
 from os import environ, sep, listdir, path
+import re
 
-# TODO, Move these to `constants.py`
 PATH = environ['JOURNAL_DIR']
 
 @app.route("/")
@@ -34,7 +34,7 @@ def index():
             key = None
         entry.read_file(decrypt=get_decrypt_func(key))
         entry.parse()
-        journals.update({file: entry.get_title()})
+        journals[file] = entry.get_title()
 
     return render_template('index.html', journals_menu=journals)
 
@@ -57,11 +57,20 @@ def render_journal(filename):
 @app.route('/enterkey', methods=('GET', 'POST'))
 def enter_key():
     if request.method == 'POST':
-        key = request.form['key'].lower()
         session.clear()
+
+        # '\W' pulls out all non-alphanumeric characters
+        # '\d' pulls out all numeric characters
+        key_regex = re.compile('[\W\d_]+')
+        key = key_regex.sub('', request.form['key'].lower())
         if key:
             session['key'] = key
 
         return redirect(url_for('index'))
 
     return render_template('enterkey.html')
+
+@app.route('/removekey')
+def remove_key():
+    session.clear()
+    return redirect(url_for('index'))
