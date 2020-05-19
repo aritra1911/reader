@@ -7,6 +7,19 @@ import re
 
 PATH = environ['JOURNAL_DIR']
 
+def redirect_dest(fallback):
+    kwargs = request.args.copy()
+    try:
+        dest = kwargs.pop('next')
+    except KeyError:
+        dest = None
+
+    try:
+        dest_url = url_for(dest, **kwargs)
+    except TypeError:
+        return redirect(fallback)
+    return redirect(dest_url)
+
 @app.route("/")
 def index():
     files = [
@@ -66,11 +79,11 @@ def enter_key():
         if key:
             session['key'] = key
 
-        return redirect(url_for('index'))
+        return redirect_dest(fallback=url_for('index'))
 
     return render_template('enterkey.html')
 
 @app.route('/removekey')
 def remove_key():
     session.clear()
-    return redirect(url_for('index'))
+    return redirect_dest(url_for('index'))
