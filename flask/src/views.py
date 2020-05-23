@@ -87,3 +87,7 @@ def enter_key():
 def remove_key():
     session.clear()
     return redirect_dest(url_for('index'))
+
+@app.route('/about')
+def about():
+    return render_template('about.html')

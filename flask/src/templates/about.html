@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}About{% endblock title %}
+{% block header %}Journal Reader{% endblock header %}
+{% block content %}
+  <p>
+    Parses a properly formatted .jrl file and enables reading it in a more<br />
+    comfortable manner with colors that are not black and white like a
+    terminal<br />window. Be sure to put on some music that matches the feels.
+  </p>
+  <p>
+    There is an encryption algorithm implemented, guarded by a key. If you
+    are<br />looking for one, chances are that you're somewhere you shouldn't be.
+    Be a<br />good person and respect other's privacy.<br />
+    <small>The code is open source! Figure out the algorithm and brute force
+    the<br />key. Or better if a ton of data is available, make out the key from
+    the<br />data like a real cryptographer. The algorithm is quite simple.
+    </small>
+  </p>
+  <p>
+    This project is
+    <a href="https://github.com/aritra1911/reader">open source</a>.
+  </p>
+  <p>
+    Designed and developed with <span style="color: #b94681;">&#9829;</span> by
+    Aritra Sarkar.<br />
+    My email : <i style="color: #138667">aritra1911@yahoo.com</i>
+  </p>
+{% endblock content %}
+{% block sidebarlinks %}
+  <a href="{{ url_for('index') }}">Index</a>
+  <a href="{{ url_for('enter_key',
+                      next=request.endpoint, **request.view_args
+              ) }}">Enter Key</a>
+  <a href="{{ url_for('remove_key',
+                      next=request.endpoint, **request.view_args
+              ) }}">Remove Key</a>
+{% endblock sidebarlinks %}
