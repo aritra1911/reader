@@ -63,8 +63,10 @@ def render_journal(filename):
     entry.parse()
 
     return render_template("journal.html",
+        filename=entry.get_filename(),
         title=entry.get_title(),
         body=entry.get_paragraphs(),
+        date=entry.get_date('%B %d, %Y'),
     )
 
 @app.route('/enterkey', methods=('GET', 'POST'))

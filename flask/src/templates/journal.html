@@ -1,11 +1,14 @@
 {% extends "base.html" %}
-{% block title %}{{ title }}{% endblock title %}
-{% block header %}{{ title }}{% endblock header %}
+{% block title %}{{ filename }}{% endblock title %}
+{% block header %}
+  <h2 style="margin-bottom: 0;">{{ title }}</h2>
+  <i style="color: #26735e;">{{ date }}</i>
+{% endblock header %}
 {% block content %}
   {% for paragraph in body %}
     <p>
     {% for line in paragraph %}
-      {{ line }}<br>
+      {{ line.replace('\t', ' '*4).replace(' ', '&nbsp;') | safe }}<br>
     {% endfor %}
     </p>
   {% endfor %}

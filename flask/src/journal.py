@@ -1,9 +1,12 @@
 import re
-
+import os
+from datetime import datetime
 
 class FileParsingError(Exception):
     pass
 
+class FileTypeError(Exception):
+    pass
 
 class JournalEntry:
     def __init__(self, filename=None):
@@ -13,7 +16,20 @@ class JournalEntry:
             self.parse()
 
     def set_filename(self, filename):
-        self.filename = filename
+        if filename.endswith('.jrl'):
+            self.filename = filename
+        else:
+            raise FileTypeError(
+                'Only properly formatted .jrl files are accepted.'
+            )
+
+    def get_filename(self):
+        return os.path.basename(self.filename)
+
+    def get_date(self, format):
+        base = os.path.basename(self.filename)
+        name = os.path.splitext(base)[0]
+        return datetime.strptime(name, '%Y%m%d').strftime(format)
 
     def get_title(self):
         return self.title

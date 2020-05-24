@@ -10,7 +10,7 @@
   <body>
     <div id="page-container">
       <div id="content-wrap">
-        <h2>{% block header %}{% endblock header %}</h2>
+        {% block header %}{% endblock header %}
         {% block content %}{% endblock content %}
       </div>
       <div class="sidenav">
