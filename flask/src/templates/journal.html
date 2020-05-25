@@ -8,7 +8,7 @@
   {% for paragraph in body %}
     <p>
     {% for line in paragraph %}
-      {{ line.replace('\t', ' '*4).replace(' ', '&nbsp;') | safe }}<br>
+      {{ line }}<br>
     {% endfor %}
     </p>
   {% endfor %}
@@ -18,8 +18,10 @@
   <a href="{{ url_for('enter_key',
                       next=request.endpoint, **request.view_args
               ) }}">Enter Key</a>
-  <a href="{{ url_for('remove_key',
-                      next=request.endpoint, **request.view_args
-              ) }}">Remove Key</a>
+  {% if key_exists %}
+    <a href="{{ url_for('remove_key',
+                        next=request.endpoint, **request.view_args
+                ) }}">Remove Key</a>
+  {% endif %}
   <a href="{{ url_for('about') }}">About</a>
 {% endblock sidebarlinks %}

@@ -31,6 +31,12 @@ def index():
 
     entry = JournalEntry()
     journals = dict()  # journals['filename': 'title']
+
+    try:
+        key = session['key']
+    except KeyError:
+        key = None
+
     for file in files:
         entry.set_filename(PATH + sep + file)
 
@@ -41,15 +47,14 @@ def index():
         # wasn't actually quicker than dumping it all at once into a variable.
         # I'm also using a single object here in order to cut down on some memory
         # usage.
-        try:
-            key = session['key']
-        except KeyError:
-            key = None
         entry.read_file(decrypt=get_decrypt_func(key))
         entry.parse()
         journals[file] = entry.get_title()
 
-    return render_template('index.html', journals_menu=journals)
+    return render_template('index.html',
+        journals_menu=journals,
+        key_exists=(key is not None)
+    )
 
 @app.route("/<filename>")
 def render_journal(filename):
@@ -67,6 +72,7 @@ def render_journal(filename):
         title=entry.get_title(),
         body=entry.get_paragraphs(),
         date=entry.get_date('%B %d, %Y'),
+        key_exists=(key is not None)
     )
 
 @app.route('/enterkey', methods=('GET', 'POST'))

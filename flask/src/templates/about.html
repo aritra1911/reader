@@ -29,10 +29,4 @@
 {% endblock content %}
 {% block sidebarlinks %}
   <a href="{{ url_for('index') }}">Index</a>
-  <a href="{{ url_for('enter_key',
-                      next=request.endpoint, **request.view_args
-              ) }}">Enter Key</a>
-  <a href="{{ url_for('remove_key',
-                      next=request.endpoint, **request.view_args
-              ) }}">Remove Key</a>
 {% endblock sidebarlinks %}
