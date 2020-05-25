@@ -3,10 +3,16 @@
 {% block header %}<h2>Enter Key</h2>{% endblock header %}
 {% block content %}
 <form method="post">
-    <label for="key">Key:</label>
-    <input type="password" name="key" />
-    <input type="submit" value="Enter" />
-  </form>
+  <table>
+    <tr>
+      <td><label for="key">Key:</label></td>
+      <td><input type="password" name="key" /></td>
+    </tr><tr>
+      <td></td>
+      <td align="center"><input type="submit" value="Enter" /></td>
+    </tr>
+  </table>
+</form>
 {% endblock content %}
 {% block sidebarlinks %}
   <a href="{{ url_for('index') }}">Index</a>
