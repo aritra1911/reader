@@ -8,7 +8,7 @@
   {% for paragraph in body %}
     <p>
     {% for line in paragraph %}
-      {{ line }}<br>
+      {{ line | safe }}<br>
     {% endfor %}
     </p>
   {% endfor %}

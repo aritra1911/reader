@@ -66,11 +66,12 @@ def render_journal(filename):
         key = None
     entry.read_file(decrypt=get_decrypt_func(key))
     entry.parse()
+    entry.to_html()
 
     return render_template("journal.html",
         filename=entry.get_filename(),
         title=entry.get_title(),
-        body=entry.get_paragraphs(),
+        body=entry.get_html_paragraphs(),
         date=entry.get_date('%B %d, %Y'),
         key_exists=(key is not None)
     )
@@ -94,7 +95,7 @@ def enter_key():
 @app.route('/removekey')
 def remove_key():
     session.clear()
-    return redirect_dest(url_for('index'))
+    return redirect_dest(fallback=url_for('index'))
 
 @app.route('/about')
 def about():

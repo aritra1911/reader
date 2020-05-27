@@ -37,6 +37,9 @@ class JournalEntry:
     def get_paragraphs(self):
         return self.paragraphs
 
+    def get_html_paragraphs(self):
+        return self.html_paragraphs
+
     def read_file(self, decrypt=None):
         with open(self.filename, "r") as file:
             self.file_content = file.read()
@@ -91,3 +94,15 @@ class JournalEntry:
                     paragraph = list()
             else:
                 paragraph.append(line)
+
+    def to_html(self):
+        self.html_paragraphs = list()
+        for paragraph in self.paragraphs:
+            html_paragraph = list()
+            for line in paragraph:
+                # double quotes
+                html_line = line.replace("``", '&ldquo;');
+                html_line = html_line.replace("''", '&rdquo;');
+
+                html_paragraph.append(html_line)
+            self.html_paragraphs.append(html_paragraph)
