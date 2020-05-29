@@ -68,13 +68,34 @@ def render_journal(filename):
     entry.parse()
     entry.to_html()
 
+    prev, next = get_neighbours(filename)
+
     return render_template("journal.html",
         filename=entry.get_filename(),
         title=entry.get_title(),
         body=entry.get_html_paragraphs(),
         date=entry.get_date('%B %d, %Y'),
-        key_exists=(key is not None)
+        key_exists=(key is not None),
+        prev=prev,
+        next=next,
     )
+
+def get_neighbours(filename):
+    files = [
+        f
+        for f in listdir(PATH)
+        if path.isfile(path.join(PATH, f)) and f.endswith('.jrl')
+    ]
+    files.sort()
+
+    neighbours = list()  # ['<prev>.jrl', '<next>.jrl']
+    file_index = files.index(filename)
+    neighbours.append(None if file_index == 0 else files[file_index - 1])
+    neighbours.append(
+        None if file_index == len(files) - 1 else files[file_index + 1]
+    )
+
+    return neighbours
 
 @app.route('/enterkey', methods=('GET', 'POST'))
 def enter_key():

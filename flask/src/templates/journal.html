@@ -23,5 +23,13 @@
                         next=request.endpoint, **request.view_args
                 ) }}">Remove Key</a>
   {% endif %}
+  {% if prev is not none %}
+    <a href="{{ url_for('render_journal', filename=prev)
+             }}">Previous Entry</a>
+  {% endif %}
+  {% if next is not none %}
+    <a href="{{ url_for('render_journal', filename=next)
+             }}">Next Entry</a>
+  {% endif %}
   <a href="{{ url_for('about') }}">About</a>
 {% endblock sidebarlinks %}
