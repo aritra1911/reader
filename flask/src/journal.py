@@ -100,9 +100,26 @@ class JournalEntry:
         for paragraph in self.paragraphs:
             html_paragraph = list()
             for line in paragraph:
+                html_line = line
+
+                # render `<` and `>` signs correctly
+                html_line = html_line.replace('<', '&lt;')
+                html_line = html_line.replace('>', '&gt;')
+
+                # replaces all tabs with 4 spaces
+                html_line = html_line.replace('\t', '&nbsp;'*4)
+
                 # double quotes
-                html_line = line.replace("``", '&ldquo;');
-                html_line = html_line.replace("''", '&rdquo;');
+                html_line = html_line.replace("``", '&ldquo;')
+                html_line = html_line.replace("''", '&rdquo;')
+
+                # replace all single quotes with closing quotes
+                # apostrophies are the same thing
+                html_line = html_line.replace("'", '&rsquo;')
+
+                # now the begining quotes
+                html_line = html_line.replace("`", '&lsquo;')
 
                 html_paragraph.append(html_line)
+
             self.html_paragraphs.append(html_paragraph)
