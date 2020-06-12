@@ -63,21 +63,38 @@ class JournalEntry:
             except IndexError:
                 raise FileParsingError("Empty file supplied")
 
-        title_regex = re.compile(r'"(.*)"|# (.*)')
+        self.title = list()
 
-        if title_regex.match(title) is None:
+        title_regex_single = re.compile(r'"(.*)"|# (.*)')
+        title_regex_multi_beg = re.compile(r'"(.*)')
+        title_regex_multi_end = re.compile(r'(.*)"')
+
+        if title_regex_single.match(title) is not None:
+            # `title_regex_single.findall(title)` outputs a list of tuple(s). In
+            # this case we're interested in the first tuple only. This tuple is
+            # the the form:
+            # `('Title', '')` for the first match according to
+            # `title_regex_single` and
+            # `('', 'Title')` for the second match pattern according to
+            # `title_regex_single`.
+            # `p_titles` is an abbreviation for `possible_titles`
+            p_titles = title_regex_single.findall(title)[0]
+            self.title.append(p_titles[0] if p_titles[0] != '' else p_titles[1])
+        elif title_regex_multi_beg.match(title) is not None:
+            self.title.append(title_regex_multi_beg.findall(title)[0])
+            title = lines.pop(0)
+            while title_regex_multi_end.match(title) is None:
+                self.title.append(title)
+                try:
+                    title = lines.pop(0)
+                except IndexError:
+                    raise FileParsingError("Incomplete multiline title")
+            self.title.append(title_regex_multi_end.findall(title)[0])
+        else:
             raise FileParsingError(
                 "Titles must be put in double quotation marks or begin with " +
                 "a single hash(#) character followed by a space character."
             )
-
-        # `title_regex.findall(title)` outputs a list of tuple(s). In this case
-        # we're interested in the first tuple only. This tuple is the the form:
-        # `('Title', '')` for the first match according to `title_regex` and
-        # `('', 'Title')` for the second match pattern according to
-        # `title_regex`. `p_titles` is an abbreviation for `possible_titles`
-        p_titles = title_regex.findall(title)[0]
-        self.title = p_titles[0] if p_titles[0] != '' else p_titles[1]
 
         # `self.paragraphs` is a list of list(s) of line(s)
         # You'll notice the blank line at the end of `lines`. Encountering this

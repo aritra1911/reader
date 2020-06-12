@@ -1,14 +1,18 @@
 {% extends "base.html" %}
 {% block title %}{{ filename }}{% endblock title %}
 {% block header %}
-  <h2 style="margin-bottom: 0;">{{ title }}</h2>
+  <h2 style="margin-bottom: 0;">
+    {% for line in title %}
+      {{ line }}<br />
+    {% endfor %}
+  </h2>
   <i style="color: #26735e;">{{ date }}</i>
 {% endblock header %}
 {% block content %}
   {% for paragraph in body %}
     <p>
     {% for line in paragraph %}
-      {{ line | safe }}<br>
+      {{ line | safe }}<br />
     {% endfor %}
     </p>
   {% endfor %}

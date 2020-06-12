@@ -4,7 +4,13 @@
 {% block content %}
   <ul>
     {% for file, title in journals_menu.items() %}
-      <li><a href="/{{ file }}">{{ file }}</a> -- {{ title }}</li>
+      <li>
+        <a href="/{{ file }}">{{ file }}</a> --
+        {{ title[0] }}
+        {% if title|length > 1 %}
+          &hellip;
+        {% endif %}
+      </li>
     {% endfor %}
   </ul>
 {% endblock content %}
