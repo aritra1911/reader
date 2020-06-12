@@ -6,9 +6,10 @@ services:
         container_name: flask
         restart: always
         environment:
-            - JOURNAL_DIR=/usr/share/app/journals
+            - JOURNAL_DIR=/usr/share/journals
         volumes:
-            - ./test_files:/usr/share/app/journals
+            - ./test_files:/usr/share/journals
+            - ./log/uwsgi:/var/log/uwsgi
         expose:
             - 8080
 
@@ -18,3 +19,5 @@ services:
         restart: always
         ports:
             - "5000:80"
+        volumes:
+            - ./log/nginx:/var/log/nginx
