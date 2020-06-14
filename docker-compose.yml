@@ -8,7 +8,10 @@ services:
         environment:
             - JOURNAL_DIR=/usr/share/journals
         volumes:
+            # change `./test_files` to the location of your `journals` folder
             - ./test_files:/usr/share/journals
+            # Consider changing this to /var/log/uwsgi:/var/log/uwsgi in
+            # production
             - ./log/uwsgi:/var/log/uwsgi
         expose:
             - 8080
@@ -18,6 +21,9 @@ services:
         container_name: nginx
         restart: always
         ports:
+            # change `5000` to `80` if port 80 is free
             - "5000:80"
         volumes:
+            # Consider changing this to /var/log/nginx:/var/log/nginx in
+            # production
             - ./log/nginx:/var/log/nginx
