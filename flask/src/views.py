@@ -74,7 +74,7 @@ def render_journal(filename):
         filename=entry.get_filename(),
         title=entry.get_title(),
         body=entry.get_html_paragraphs(),
-        date=entry.get_date('%B %d, %Y'),
+        date=entry.get_date('%B %d, %Y -- %A'),
         key_exists=(key is not None),
         prev=prev,
         next=next,
