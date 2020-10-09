@@ -51,6 +51,16 @@ def index():
         entry.parse()
         journals[file] = entry.get_title()
 
+    # Sort `journals` dictionary in decending
+    journals = {
+        key: value
+        for key, value in sorted(
+            journals.items(),
+            key=lambda item: item[0],
+            reverse=True
+        )
+    }
+
     return render_template('index.html',
         journals_menu=journals,
         key_exists=(key is not None)

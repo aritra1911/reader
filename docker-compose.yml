@@ -8,8 +8,8 @@ services:
         environment:
             - JOURNAL_DIR=/usr/share/journals
         volumes:
-            # change `./test_files` to the location of your `journals` folder
-            - ./test_files:/usr/share/journals
+            # change `~/journals` to the location of your `journals` folder
+            - ~/journals:/usr/share/journals
             # Consider changing this to /var/log/uwsgi:/var/log/uwsgi in production
             - ./log/uwsgi:/var/log/uwsgi
         expose:
