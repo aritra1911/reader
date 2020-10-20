@@ -27,7 +27,7 @@ def index():
         for f in listdir(PATH)
         if path.isfile(path.join(PATH, f)) and f.endswith('.jrl')
     ]
-    files.sort()
+    files.sort(reverse=True)
 
     entry = JournalEntry()
     journals = dict()  # journals['filename': 'title']
@@ -50,16 +50,6 @@ def index():
         entry.read_file(decrypt=get_decrypt_func(key))
         entry.parse()
         journals[file] = entry.get_title()
-
-    # Sort `journals` dictionary in decending
-    journals = {
-        key: value
-        for key, value in sorted(
-            journals.items(),
-            key=lambda item: item[0],
-            reverse=True
-        )
-    }
 
     return render_template('index.html',
         journals_menu=journals,
