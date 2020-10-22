@@ -2,17 +2,20 @@
 {% block title %}/{% endblock title %}
 {% block header %}<h2>/Index</h2>{% endblock header %}
 {% block content %}
-  <ul>
-    {% for file, title in journals_menu.items() %}
-      <li>
-        <a href="/{{ file }}">{{ file }}</a> --
-        {{ title[0] }}
-        {% if title|length > 1 %}
-          &hellip;
-        {% endif %}
-      </li>
-    {% endfor %}
-  </ul>
+  {% for key, value in menu.items() %}
+  <h4>{{ key }}</h4>
+    <ul>
+      {% for file, title in value['files'].items() %}
+        <li>
+          <a href="/{{ file }}">{{ file }}</a> --
+          {{ title[0] }}
+          {% if title|length > 1 %}
+            &hellip;
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% endfor %}
 {% endblock content %}
 {% block sidebarlinks %}
   <a href="{{ url_for('enter_key',

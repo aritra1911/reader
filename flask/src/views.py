@@ -1,11 +1,16 @@
 from . import app
-from .journal import JournalEntry
-from .helpers import get_decrypt_func
+from .article import JournalEntry, Story, Idea
+from .decryption import get_decrypt_func
 from flask import render_template, request, session, url_for, redirect
 from os import environ, sep, listdir, path
 import re
 
-PATH = environ['JOURNAL_DIR']
+def get_files(directory, extension):
+    return [
+        f
+        for f in listdir(directory)
+        if path.isfile(path.join(directory, f)) and f.endswith(extension)
+    ]
 
 def redirect_dest(fallback):
     kwargs = request.args.copy()
@@ -20,40 +25,58 @@ def redirect_dest(fallback):
         return redirect(fallback)
     return redirect(dest_url)
 
+def get_neighbours(filename, path, extension):
+    files = get_files(path, extension).sort()
+
+    neighbours = list()  # ['<prev>.jrl', '<next>.jrl']
+    file_index = files.index(filename)
+    neighbours.append(None if file_index == 0 else files[file_index - 1])
+    neighbours.append(
+        None if file_index == len(files) - 1 else files[file_index + 1]
+    )
+
+    return neighbours
+
 @app.route("/")
 def index():
-    files = [
-        f
-        for f in listdir(PATH)
-        if path.isfile(path.join(PATH, f)) and f.endswith('.jrl')
-    ]
-    files.sort(reverse=True)
+    menu = {
+        "Journal Entries": {
+            "instance": JournalEntry(),
+            "path": environ['JOURNALS_DIR'],
+            "files": dict(),
+        },
+        "Stories": {
+            "instance": Story(),
+            "path": environ['STORIES_DIR'],
+            "files": dict(),
+        },
+        "Ideas": {
+            "instance": Idea(),
+            "path": environ['IDEAS_DIR'],
+            "files": dict(),
+        },
+    }
 
-    entry = JournalEntry()
-    journals = dict()  # journals['filename': 'title']
-
+    # Get key if available
     try:
         key = session['key']
     except KeyError:
         key = None
 
-    for file in files:
-        entry.set_filename(PATH + sep + file)
+    # Generate a decrypt function
+    decrypt_func = get_decrypt_func(key)
 
-        # You might ask why on earth I'm not optimising read_file() to just get
-        # the title in this case. Well, I ran a few tests and recorded the times
-        # they took to load the file_content. Apparently there's not much
-        # advantage in doing that. Also somehow reading the file line by line
-        # wasn't actually quicker than dumping it all at once into a variable.
-        # I'm also using a single object here in order to cut down on some memory
-        # usage.
-        entry.read_file(decrypt=get_decrypt_func(key))
-        entry.parse()
-        journals[file] = entry.get_title()
+    # Populate `files` dicts
+    for key, value in menu.items():
+        for file in sorted(get_files(value["path"], value["instance"].get_extension()), reverse=True):
+            value["instance"].set_filename(value["path"] + sep + file)
+            value["instance"].read_file(decrypt=decrypt_func)
+            value["instance"].parse()
+            value["files"][file] = value["instance"].get_title()
 
     return render_template('index.html',
-        journals_menu=journals,
-        key_exists=(key is not None)
+        menu=menu,
+        key_exists=(key is None),
     )
 
 @app.route("/<filename>")
@@ -79,23 +102,6 @@ def render_journal(filename):
         prev=prev,
         next=next,
     )
-
-def get_neighbours(filename):
-    files = [
-        f
-        for f in listdir(PATH)
-        if path.isfile(path.join(PATH, f)) and f.endswith('.jrl')
-    ]
-    files.sort()
-
-    neighbours = list()  # ['<prev>.jrl', '<next>.jrl']
-    file_index = files.index(filename)
-    neighbours.append(None if file_index == 0 else files[file_index - 1])
-    neighbours.append(
-        None if file_index == len(files) - 1 else files[file_index + 1]
-    )
-
-    return neighbours
 
 @app.route('/enterkey', methods=('GET', 'POST'))
 def enter_key():

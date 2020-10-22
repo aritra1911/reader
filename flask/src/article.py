@@ -8,7 +8,8 @@ class FileParsingError(Exception):
 class FileTypeError(Exception):
     pass
 
-class JournalEntry:
+# Do not instantiate this class.
+class Article:
     def __init__(self, filename=None):
         if filename is not None:
             self.set_filename(filename)
@@ -16,7 +17,7 @@ class JournalEntry:
             self.parse()
 
     def set_filename(self, filename):
-        if filename.endswith('.jrl'):
+        if filename.endswith(self.extension):
             self.filename = filename
         else:
             raise FileTypeError(
@@ -25,6 +26,9 @@ class JournalEntry:
 
     def get_filename(self):
         return os.path.basename(self.filename)
+
+    def get_extension(self):
+        return self.extension
 
     def get_date(self, format):
         base = os.path.basename(self.filename)
@@ -140,3 +144,19 @@ class JournalEntry:
                 html_paragraph.append(html_line)
 
             self.html_paragraphs.append(html_paragraph)
+
+class JournalEntry(Article):
+    def __init__(self, filename=None):
+        self.extension = ".jrl"
+        super().__init__(filename)
+
+class Story(Article):
+    def __init__(self, filename=None):
+        self.extension = ".stry"
+        super().__init__(filename)
+
+class Idea(Article):
+    def __init__(self, filename=None):
+        self.extension = ".dea"
+        super().__init__(filename)
+
