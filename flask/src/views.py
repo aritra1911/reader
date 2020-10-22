@@ -1,16 +1,29 @@
 from . import app
-from .article import JournalEntry, Story, Idea
+from .article import Journal, Story, Idea
 from .decryption import get_decrypt_func
 from flask import render_template, request, session, url_for, redirect
-from os import environ, sep, listdir, path
+#from os import environ, sep, listdir, path
+import os
 import re
 
-def get_files(directory, extension):
+handles = [
+    Journal(os.environ['JOURNALS_DIR']),
+    Story(os.environ['STORIES_DIR']),
+    Idea(os.environ['IDEAS_DIR']),
+]
+
+def get_files(path, extension):
     return [
         f
-        for f in listdir(directory)
-        if path.isfile(path.join(directory, f)) and f.endswith(extension)
+        for f in os.listdir(path)
+        if os.path.isfile(os.path.join(path, f)) and f.endswith(extension)
     ]
+
+def get_key():
+    try:
+        return session['key']
+    except KeyError:
+        return None
 
 def redirect_dest(fallback):
     kwargs = request.args.copy()
@@ -57,14 +70,8 @@ def index():
         },
     }
 
-    # Get key if available
-    try:
-        key = session['key']
-    except KeyError:
-        key = None
-
     # Generate a decrypt function
-    decrypt_func = get_decrypt_func(key)
+    decrypt_func = get_decrypt_func(get_key())
 
     # Populate `files` dicts
     for key, value in menu.items():
@@ -76,18 +83,14 @@ def index():
 
     return render_template('index.html',
         menu=menu,
-        key_exists=(key is None),
+        key_exists=(get_key() is not None),
     )
 
 @app.route("/<filename>")
 def render_journal(filename):
     entry = JournalEntry()
-    entry.set_filename(PATH + sep + filename)
-    try:
-        key = session['key']
-    except KeyError:
-        key = None
-    entry.read_file(decrypt=get_decrypt_func(key))
+    entry.set_filename(PATH + os.sep + filename)
+    entry.read_file(decrypt=get_decrypt_func(get_key()))
     entry.parse()
     entry.to_html()
 
@@ -98,7 +101,7 @@ def render_journal(filename):
         title=entry.get_title(),
         body=entry.get_html_paragraphs(),
         date=entry.get_date('%B %d, %Y -- %A'),
-        key_exists=(key is not None),
+        key_exists=(get_key() is not None),
         prev=prev,
         next=next,
     )

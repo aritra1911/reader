@@ -10,11 +10,8 @@ class FileTypeError(Exception):
 
 # Do not instantiate this class.
 class Article:
-    def __init__(self, filename=None):
-        if filename is not None:
-            self.set_filename(filename)
-            self.read_file()
-            self.parse()
+    def __init__(self, path):
+        self.path = path
 
     def set_filename(self, filename):
         if filename.endswith(self.extension):
@@ -23,6 +20,12 @@ class Article:
             raise FileTypeError(
                 'Only properly formatted .jrl files are accepted.'
             )
+
+    def get_category(self):
+        return self.category
+
+    def get_path(self):
+        return self.path
 
     def get_filename(self):
         return os.path.basename(self.filename)
@@ -145,18 +148,20 @@ class Article:
 
             self.html_paragraphs.append(html_paragraph)
 
-class JournalEntry(Article):
-    def __init__(self, filename=None):
+class Journal(Article):
+    def __init__(self, path):
         self.extension = ".jrl"
-        super().__init__(filename)
+        self.category = "Journals"
+        super().__init__(path)
 
 class Story(Article):
-    def __init__(self, filename=None):
+    def __init__(self, path):
         self.extension = ".stry"
-        super().__init__(filename)
+        self.category = "Stories"
+        super().__init__(path)
 
 class Idea(Article):
-    def __init__(self, filename=None):
+    def __init__(self, path):
         self.extension = ".dea"
-        super().__init__(filename)
-
+        self.category = "Ideas"
+        super().__init__(path)
