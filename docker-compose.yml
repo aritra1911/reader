@@ -6,10 +6,15 @@ services:
         container_name: flask
         restart: always
         environment:
-            - JOURNAL_DIR=/usr/share/journals
+            - JOURNALS_DIR=/usr/share/journals
+            - STORIES_DIR=/usr/share/stories
+            - IDEAS_DIR=/usr/share/ideas
         volumes:
             # change `~/journals` to the location of your `journals` folder
+            # same for `stories` and `ideas`
             - ~/journals:/usr/share/journals
+            - ~/stories:/usr/share/stories
+            - ~/ideas:/usr/share/ideas
             # Consider changing this to /var/log/uwsgi:/var/log/uwsgi in production
             - ./log/uwsgi:/var/log/uwsgi
         expose:
