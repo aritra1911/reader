@@ -28,12 +28,12 @@
                 ) }}">Remove Key</a>
   {% endif %}
   {% if prev is not none %}
-    <a href="{{ url_for('render_journal', filename=prev)
-             }}">Previous Entry</a>
+    <a href="{{ url_for('render_article', filename=prev)
+             }}">Previous</a>
   {% endif %}
   {% if next is not none %}
-    <a href="{{ url_for('render_journal', filename=next)
-             }}">Next Entry</a>
+    <a href="{{ url_for('render_article', filename=next)
+             }}">Next</a>
   {% endif %}
   <a href="{{ url_for('about') }}">About</a>
 {% endblock sidebarlinks %}

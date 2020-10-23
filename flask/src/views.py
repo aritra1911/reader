@@ -2,7 +2,6 @@ from . import app
 from .article import Journal, Story, Idea
 from .decryption import get_decrypt_func
 from flask import render_template, request, session, url_for, redirect
-#from os import environ, sep, listdir, path
 import os
 import re
 
@@ -39,47 +38,32 @@ def redirect_dest(fallback):
     return redirect(dest_url)
 
 def get_neighbours(filename, path, extension):
-    files = get_files(path, extension).sort()
+    files = sorted(get_files(path, extension))
 
     neighbours = list()  # ['<prev>.jrl', '<next>.jrl']
     file_index = files.index(filename)
-    neighbours.append(None if file_index == 0 else files[file_index - 1])
-    neighbours.append(
-        None if file_index == len(files) - 1 else files[file_index + 1]
-    )
+    neighbours.append(None if file_index == 0              else files[file_index - 1])
+    neighbours.append(None if file_index == len(files) - 1 else files[file_index + 1])
 
     return neighbours
 
 @app.route("/")
 def index():
-    menu = {
-        "Journal Entries": {
-            "instance": JournalEntry(),
-            "path": environ['JOURNALS_DIR'],
-            "files": dict(),
-        },
-        "Stories": {
-            "instance": Story(),
-            "path": environ['STORIES_DIR'],
-            "files": dict(),
-        },
-        "Ideas": {
-            "instance": Idea(),
-            "path": environ['IDEAS_DIR'],
-            "files": dict(),
-        },
-    }
+    menu = dict()
 
     # Generate a decrypt function
     decrypt_func = get_decrypt_func(get_key())
 
-    # Populate `files` dicts
-    for key, value in menu.items():
-        for file in sorted(get_files(value["path"], value["instance"].get_extension()), reverse=True):
-            value["instance"].set_filename(value["path"] + sep + file)
-            value["instance"].read_file(decrypt=decrypt_func)
-            value["instance"].parse()
-            value["files"][file] = value["instance"].get_title()
+    # Prepare menu
+    for handle in handles:
+        cat = handle.get_category()
+        menu[cat] = dict()
+
+        for file in sorted(get_files(handle.get_path(), handle.get_extension()), reverse=True):
+            handle.set_filename(handle.get_path() + os.sep + file)
+            handle.read_file(decrypt=decrypt_func)
+            handle.parse()
+            menu[cat][file] = handle.get_title()
 
     return render_template('index.html',
         menu=menu,
@@ -87,20 +71,26 @@ def index():
     )
 
 @app.route("/<filename>")
-def render_journal(filename):
-    entry = JournalEntry()
-    entry.set_filename(PATH + os.sep + filename)
-    entry.read_file(decrypt=get_decrypt_func(get_key()))
-    entry.parse()
-    entry.to_html()
+def render_article(filename):
+    handler = None
 
-    prev, next = get_neighbours(filename)
+    for handle in handles:
+        if filename.endswith(handle.extension):
+            handler = handle
+            break
 
-    return render_template("journal.html",
-        filename=entry.get_filename(),
-        title=entry.get_title(),
-        body=entry.get_html_paragraphs(),
-        date=entry.get_date('%B %d, %Y -- %A'),
+    handler.set_filename(handler.get_path() + os.sep + filename)
+    handler.read_file(decrypt=get_decrypt_func(get_key()))
+    handler.parse()
+    handler.to_html()
+
+    prev, next = get_neighbours(filename, handler.get_path(), handle.get_extension())
+
+    return render_template("article.html",
+        filename=handler.get_filename(),
+        title=handler.get_title(),
+        body=handler.get_html_paragraphs(),
+        date=handler.get_date('%B %d, %Y -- %A'),
         key_exists=(get_key() is not None),
         prev=prev,
         next=next,

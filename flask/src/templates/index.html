@@ -2,13 +2,12 @@
 {% block title %}/{% endblock title %}
 {% block header %}<h2>/Index</h2>{% endblock header %}
 {% block content %}
-  {% for key, value in menu.items() %}
-  <h4>{{ key }}</h4>
+  {% for category, files in menu.items() %}
+  <h4>{{ category }}</h4>
     <ul>
-      {% for file, title in value['files'].items() %}
+      {% for file, title in files.items() %}
         <li>
-          <a href="/{{ file }}">{{ file }}</a> --
-          {{ title[0] }}
+          <a href="/{{ file }}">{{ file }}</a> -- {{ title[0] }}
           {% if title|length > 1 %}
             &hellip;
           {% endif %}

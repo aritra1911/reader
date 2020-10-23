@@ -36,7 +36,10 @@ class Article:
     def get_date(self, format):
         base = os.path.basename(self.filename)
         name = os.path.splitext(base)[0]
-        return datetime.strptime(name, '%Y%m%d').strftime(format)
+        try:
+            return datetime.strptime(name, '%Y%m%d').strftime(format)
+        except ValueError:
+            return None
 
     def get_title(self):
         return self.title
