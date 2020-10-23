@@ -17,6 +17,15 @@ a:hover {
   text-decoration-style: dotted;
 }
 
+h4 {
+  margin-bottom: 0;
+}
+
+ul {
+  margin-top: 8px;
+  padding-left: 20px;
+}
+
 .sidenav {
   width: 160px;
   position: fixed;

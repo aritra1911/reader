@@ -21,9 +21,6 @@ class Article:
                 'Only properly formatted .jrl files are accepted.'
             )
 
-    def get_category(self):
-        return self.category
-
     def get_path(self):
         return self.path
 
@@ -154,17 +151,23 @@ class Article:
 class Journal(Article):
     def __init__(self, path):
         self.extension = ".jrl"
-        self.category = "Journals"
         super().__init__(path)
+
+    def get_category(self):
+        return "Journal Entries"
 
 class Story(Article):
     def __init__(self, path):
         self.extension = ".stry"
-        self.category = "Stories"
         super().__init__(path)
+
+    def get_category(self):
+        return "Stories"
 
 class Idea(Article):
     def __init__(self, path):
         self.extension = ".dea"
-        self.category = "Ideas"
         super().__init__(path)
+
+    def get_category(self):
+        return "Ideas"
