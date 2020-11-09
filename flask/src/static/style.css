@@ -51,7 +51,9 @@ ul {
 
 #content-wrap {
   margin-top: 16px;
+  margin-bottom: 16px;
   margin-left: 16px;
+  margin-right: 192px;
 }
 
 @media screen and (max-height: 450px) {
