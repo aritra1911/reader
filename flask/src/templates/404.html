@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}404{% endblock title %}
+{% block header %}<h2>Oops!</h2>{% endblock header %}
+{% block content %}
+{{ error }}
+{% endblock content %}
+{% block sidebarlinks %}
+  <a href="{{ url_for('index') }}">Index</a>
+{% endblock sidebarlinks %}

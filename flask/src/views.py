@@ -1,7 +1,8 @@
 from . import app
 from .article import Journal, Story, Idea
 from .decryption import get_decrypt_func
-from flask import render_template, request, session, url_for, redirect
+from flask import render_template, request, session, url_for, redirect, abort
+import random
 import os
 import re
 
@@ -10,6 +11,24 @@ handles = [
     Story(os.environ['STORIES_DIR']),
     Idea(os.environ['IDEAS_DIR']),
 ]
+
+@app.errorhandler(404)
+def page_not_found(_):
+    try:
+        with open('src/static/404.txt') as errors_file:
+            possible_errors = errors_file.readlines()
+
+        # strip() removes whitespace characters like `\n` at the end of each line
+        possible_errors = [
+            e.strip() + " not found!"
+            for e in possible_errors
+        ]
+    except FileNotFoundError:
+        possible_errors = ['Page not found!']
+
+    return render_template('404.html',
+        error=random.choice(possible_errors),
+    ), 404
 
 def get_files(path, extension):
     return [
@@ -78,6 +97,9 @@ def render_article(filename):
         if filename.endswith(handle.extension):
             handler = handle
             break
+
+    if not handler:
+        abort(404)
 
     handler.set_filename(handler.get_path() + os.sep + filename)
     handler.read_file(decrypt=get_decrypt_func(get_key()))
