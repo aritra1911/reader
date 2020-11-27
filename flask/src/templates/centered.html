@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block bodyclass %}nice{% endblock bodyclass %}
+{% block divclass %}centered{% endblock divclass %}
+{% block contents %}
+  <div class="child">
+    {% block header %}{% endblock %}
+    {% block content %}{% endblock %}
+  </div>
+{% endblock contents %}
