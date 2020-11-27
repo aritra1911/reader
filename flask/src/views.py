@@ -15,19 +15,17 @@ handles = [
 @app.errorhandler(404)
 def page_not_found(_):
     try:
-        with open('src/static/404.txt') as errors_file:
-            possible_errors = errors_file.readlines()
+        with open('src/static/404.txt') as missings_file:
+            possible_missings = missings_file.readlines()
 
-        # strip() removes whitespace characters like `\n` at the end of each line
-        possible_errors = [
-            e.strip() + " not found!"
-            for e in possible_errors
-        ]
+        # removes whitespace characters like `\n` at the end of each line
+        possible_missings = [ m.strip() for m in possible_missings ]
+
     except FileNotFoundError:
-        possible_errors = ['Page not found!']
+        possible_missings = 'File'
 
     return render_template('404.html',
-        error=random.choice(possible_errors),
+        missing=random.choice(possible_missings),
     ), 404
 
 def get_files(path, extension):

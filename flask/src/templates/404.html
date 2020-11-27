@@ -3,7 +3,7 @@
 {% block bodyclass %}nightmare{% endblock bodyclass %}
 {% block header %}<h1>Error 404!</h1>{% endblock header %}
 {% block content %}
-{{ error }}
+<del><font color="#660000">Page</font></del> <ins>{{ missing }}</ins> not found!
 {% endblock content %}
 {% block sidebarlinks %}
   <a href="{{ url_for('index') }}">Index</a>
