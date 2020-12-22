@@ -15,7 +15,7 @@ handles = [
 @app.errorhandler(404)
 def page_not_found(_):
     try:
-        with open('src/static/404.txt') as missings_file:
+        with open('404.txt') as missings_file:
             possible_missings = missings_file.readlines()
 
         # removes whitespace characters like `\n` at the end of each line
