@@ -8,10 +8,14 @@ class FileParsingError(Exception):
 class FileTypeError(Exception):
     pass
 
-# Do not instantiate this class.
 class Article:
-    def __init__(self, path):
-        self.path = path
+    def __init__(self, category=None, path=None, extension=None):
+        if category is not None:
+            self.set_category(category)
+        if path is not None:
+            self.set_path(path)
+        if extension is not None:
+            self.set_extension(extension)
 
     def set_filename(self, filename):
         if filename.endswith(self.extension):
@@ -21,14 +25,26 @@ class Article:
                 'Only properly formatted .jrl files are accepted.'
             )
 
+    def set_category(self, category):
+        self.category = category
+
+    def set_path(self, path):
+        self.path = path.replace('~', os.environ['HOME'])
+
+    def set_extension(self, extension):
+        self.extension = extension
+
+    def get_category(self):
+        return self.category
+
     def get_path(self):
         return self.path
 
-    def get_filename(self):
-        return os.path.basename(self.filename)
-
     def get_extension(self):
         return self.extension
+
+    def get_filename(self):
+        return os.path.basename(self.filename)
 
     def get_date(self, format):
         base = os.path.basename(self.filename)
@@ -147,27 +163,3 @@ class Article:
                 html_paragraph.append(html_line)
 
             self.html_paragraphs.append(html_paragraph)
-
-class Journal(Article):
-    def __init__(self, path):
-        self.extension = ".jrl"
-        super().__init__(path)
-
-    def get_category(self):
-        return "Journal Entries"
-
-class Story(Article):
-    def __init__(self, path):
-        self.extension = ".stry"
-        super().__init__(path)
-
-    def get_category(self):
-        return "Stories"
-
-class Idea(Article):
-    def __init__(self, path):
-        self.extension = ".dea"
-        super().__init__(path)
-
-    def get_category(self):
-        return "Ideas"

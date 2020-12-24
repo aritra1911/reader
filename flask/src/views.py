@@ -1,16 +1,13 @@
 from . import app
-from .article import Journal, Story, Idea
 from .decryption import get_decrypt_func
+from .config_parser import ConfigParser
 from flask import render_template, request, session, url_for, redirect, abort
 import random
 import os
 import re
 
-handles = [
-    Journal(os.environ['JOURNALS_DIR']),
-    Story(os.environ['STORIES_DIR']),
-    Idea(os.environ['IDEAS_DIR']),
-]
+def get_handles():
+    return ConfigParser('config').get_instances()
 
 @app.errorhandler(404)
 def page_not_found(_):
@@ -72,7 +69,7 @@ def index():
     decrypt_func = get_decrypt_func(get_key())
 
     # Prepare menu
-    for handle in handles:
+    for handle in get_handles():
         cat = handle.get_category()
         menu[cat] = dict()
 
@@ -91,7 +88,7 @@ def index():
 def render_article(filename):
     handler = None
 
-    for handle in handles:
+    for handle in get_handles():
         if filename.endswith(handle.extension):
             handler = handle
             break
@@ -99,7 +96,15 @@ def render_article(filename):
     if not handler:
         abort(404)
 
-    handler.set_filename(handler.get_path() + os.sep + filename)
+    file_path = handler.get_path()
+    if not file_path.endswith(os.sep):
+        file_path += os.sep
+    file_path += filename
+
+    if not os.path.exists(file_path):
+        abort(404)
+
+    handler.set_filename(file_path)
     handler.read_file(decrypt=get_decrypt_func(get_key()))
     handler.parse()
     handler.to_html()

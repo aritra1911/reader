@@ -5,10 +5,6 @@ services:
         build: ./flask
         container_name: flask
         restart: always
-        environment:
-            - JOURNALS_DIR=/usr/share/journals
-            - STORIES_DIR=/usr/share/stories
-            - IDEAS_DIR=/usr/share/ideas
         volumes:
             # change `~/journals` to the location of your `journals` folder
             # same for `stories` and `ideas`
