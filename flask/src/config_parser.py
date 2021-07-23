@@ -14,9 +14,13 @@ class ConfigParser:
             for line in config_file.readlines():
                 line = line.strip()
 
-                if line.startswith('#'):
+                if line.startswith('#') or not line:
+                    # Comments begin with `#` and
+                    # Ignore blank lines obviously.
                     continue
 
+                # TODO: What happens in case of a failed parse
+                #       due to a syntax error?
                 cat, path, ext = line.split(':')
                 self.configs.append({
                     "category": cat,
