@@ -2,9 +2,11 @@ from . import app
 from .decryption import get_decrypt_func
 from .config_parser import ConfigParser
 from flask import render_template, request, session, url_for, redirect, abort
+from flask import __version__ as flask_version
 import random
 import os
 import re
+import sys
 
 def get_handles():
     return ConfigParser('config').get_instances()
@@ -144,4 +146,8 @@ def remove_key():
 
 @app.route('/about')
 def about():
-    return render_template('about.html')
+    return render_template('about.html',
+        flask_version='Flask ' + flask_version,
+        py_version='Python ' + sys.version,
+        py_releaselevel=sys.version_info.releaselevel,
+    )

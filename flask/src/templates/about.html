@@ -10,7 +10,7 @@
   <p>
     There is an encryption algorithm implemented, guarded by a key. If you
     are<br />looking for one, chances are that you're somewhere you shouldn't be.
-    Be a<br />good person and respect other's privacy.<br />
+    Be a<br />good person and respect other's privacy.<br /><br />
     <small>The code is open source! Figure out the algorithm and brute force
     the<br />key. Or better if a ton of data is available, make out the key from
     the<br />data like a real cryptographer. The algorithm is quite simple.
@@ -25,6 +25,18 @@
     Designed and developed with <span style="color: #b94681;">&#9829;</span> by
     Aritra Sarkar.<br />
     My email : <i style="color: #138667">aritra1911@yahoo.com</i>
+  </p>
+  <br />
+  <p>
+    <h4>Server Configuration:</h4>
+    <tt><pre>{{ flask_version }}</pre></tt>
+    <tt><pre>{{ py_version }}</pre></tt>
+    {% if py_releaselevel != 'final' %}
+      <small>Seems like this is working well on a {{ py_releaselevel }} release.
+      You still might wanna<br /> check the other pages and try to break
+      something. Upon successfully<br /> breaking something, report the issue to
+      whomever it may concern.</small>
+    {% endif %}
   </p>
 {% endblock content %}
 {% block sidebarlinks %}
