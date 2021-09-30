@@ -1,8 +1,11 @@
 from . import app
 from .decryption import get_decrypt_func
 from .config_parser import ConfigParser
-from flask import render_template, request, session, url_for, redirect, abort
+from flask import (  # type: ignore
+    render_template, request, session, url_for, redirect, abort
+)
 from flask import __version__ as flask_version
+from typing import Callable
 import random
 import os
 import re
@@ -68,7 +71,9 @@ def index():
     menu = dict()
 
     # Generate a decrypt function
-    decrypt_func = get_decrypt_func(get_key())
+    key: Optional[str] = get_key()
+    decrypt_func: Optional[Callable[[str], str]] = \
+        get_decrypt_func(key) if key is not None else None
 
     # Prepare menu
     for handle in get_handles():
@@ -107,7 +112,12 @@ def render_article(filename):
         abort(404)
 
     handler.set_filename(file_path)
-    handler.read_file(decrypt=get_decrypt_func(get_key()))
+
+    key: Optional[str] = get_key()
+    handler.read_file(
+        decrypt=get_decrypt_func(key) if key is not None else None
+    )
+
     handler.parse()
     handler.to_html()
 
