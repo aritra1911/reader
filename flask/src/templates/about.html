@@ -28,9 +28,13 @@
   </p>
   <br />
   <p>
-    <h4>Server Configuration:</h4>
-    <tt><pre>{{ flask_version }}</pre></tt>
-    <tt><pre>{{ py_version }}</pre></tt>
+    <h4>Server Info:</h4>
+    <pre>
+          System : {{ os_uname.sysname }}
+         Release : {{ os_uname.release }}
+            Arch : {{ os_uname.machine }}
+          Python : {{ py_version }}
+           Flask : {{ flask_version }}</pre>
     {% if py_releaselevel != 'final' %}
       <small>Seems like this is working well on a {{ py_releaselevel }} release.
       You still might wanna<br /> check the other pages and try to break

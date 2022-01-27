@@ -157,7 +157,8 @@ def remove_key():
 @app.route('/about')
 def about():
     return render_template('about.html',
-        flask_version='Flask ' + flask_version,
-        py_version='Python ' + sys.version,
+        os_uname=os.uname(),
+        py_version=sys.version,
         py_releaselevel=sys.version_info.releaselevel,
+        flask_version=flask_version,
     )

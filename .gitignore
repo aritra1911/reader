@@ -1,6 +1,7 @@
 __pycache__/
 venv*/
 env/
+virtualenv/
 test_files/
 log/
 
