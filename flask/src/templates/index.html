@@ -7,7 +7,7 @@
     <ul>
       {% for file, title in files.items() %}
         <li>
-          <a href="{{ url_for('index') }}/{{ file }}">{{ file }}</a> -- {{ title[0] }}
+          <a href="{{ url_for('index') }}{{ file }}">{{ file }}</a> -- {{ title[0] }}
           {% if title|length > 1 %}
             &hellip;
           {% endif %}
