@@ -157,6 +157,7 @@ def remove_key():
 @app.route('/about')
 def about():
     return render_template('about.html',
+        server=request.environ.get('SERVER_SOFTWARE'),
         os_uname=os.uname(),
         py_version=sys.version,
         py_releaselevel=sys.version_info.releaselevel,
