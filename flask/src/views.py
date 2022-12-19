@@ -1,3 +1,4 @@
+from constants import CONFIG_FILE, MISSINGS_FILE
 from . import app
 from .decryption import get_decrypt_func
 from .config_parser import ConfigParser
@@ -13,20 +14,13 @@ import os
 import re
 import sys
 
-PREFIX = '/home/aritra/pgm/reader/flask/'
-
-FILE_PATH = {
-    'config': PREFIX + 'config',
-    '404.txt': PREFIX + '404.txt',
-}
-
 def get_config() -> ConfigParser:
-    return ConfigParser(FILE_PATH['config'])
+    return ConfigParser(CONFIG_FILE)
 
 @app.errorhandler(404)
 def page_not_found(_):
     try:
-        with open(FILE_PATH['404.txt']) as missings_file:
+        with open(MISSINGS_FILE) as missings_file:
             possible_missings = missings_file.readlines()
 
         # removes whitespace characters like `\n` at the end of each line
