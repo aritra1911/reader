@@ -1,6 +1,7 @@
 import re
 import os
 from datetime import datetime
+from typing import Optional
 
 class FileParsingError(Exception):
     pass
@@ -9,45 +10,16 @@ class FileTypeError(Exception):
     pass
 
 class Article:
-    def __init__(self, category=None, path=None, extension=None):
-        if category is not None:
-            self.set_category(category)
-        if path is not None:
-            self.set_path(path)
-        if extension is not None:
-            self.set_extension(extension)
+    def __init__(self, filepath: str=None, skipbody: bool=False):
+        if filepath is not None:
+            self.set_filepath(filepath)
+        self.skipbody = skipbody
 
-    def set_filename(self, filename):
-        if filename.endswith(self.extension):
-            self.filename = filename
-        else:
-            raise FileTypeError(
-                'Only properly formatted .jrl files are accepted.'
-            )
+    def set_filepath(self, filepath: str):
+        self.filepath = filepath
 
-    def set_category(self, category):
-        self.category = category
-
-    def set_path(self, path):
-        self.path = path.replace('~', os.environ['HOME'])
-
-    def set_extension(self, extension):
-        self.extension = extension
-
-    def get_category(self):
-        return self.category
-
-    def get_path(self):
-        return self.path
-
-    def get_extension(self):
-        return self.extension
-
-    def get_filename(self):
-        return os.path.basename(self.filename)
-
-    def get_date(self, format):
-        base = os.path.basename(self.filename)
+    def get_date(self, format: str) -> Optional[str]:
+        base = os.path.basename(self.filepath)
         name = os.path.splitext(base)[0]
         try:
             return datetime.strptime(name, '%Y%m%d').strftime(format)
@@ -64,7 +36,7 @@ class Article:
         return self.html_paragraphs
 
     def read_file(self, decrypt=None):
-        with open(self.filename, "r") as file:
+        with open(self.filepath, "r") as file:
             self.file_content = file.read()
 
         if decrypt is not None:
@@ -118,6 +90,9 @@ class Article:
                 "Titles must be put in double quotation marks or begin with " +
                 "a single hash(#) character followed by a space character."
             )
+
+        if self.skipbody:
+            return
 
         # `self.paragraphs` is a list of list(s) of line(s)
         # You'll notice the blank line at the end of `lines`. Encountering this

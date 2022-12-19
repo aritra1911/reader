@@ -1,23 +1,32 @@
 from . import app
 from .decryption import get_decrypt_func
 from .config_parser import ConfigParser
-from flask import (  # type: ignore
+from .article import Article, FileParsingError
+from flask import (
     render_template, request, session, url_for, redirect, abort
 )
 from flask import __version__ as flask_version
-from typing import Callable
+from typing import List, Optional
 import random
+import fnmatch
 import os
 import re
 import sys
 
-def get_handles():
-    return ConfigParser('config').get_instances()
+PREFIX = '/home/aritra/pgm/reader/flask/'
+
+FILE_PATH = {
+    'config': PREFIX + 'config',
+    '404.txt': PREFIX + '404.txt',
+}
+
+def get_config() -> ConfigParser:
+    return ConfigParser(FILE_PATH['config'])
 
 @app.errorhandler(404)
 def page_not_found(_):
     try:
-        with open('404.txt') as missings_file:
+        with open(FILE_PATH['404.txt']) as missings_file:
             possible_missings = missings_file.readlines()
 
         # removes whitespace characters like `\n` at the end of each line
@@ -30,14 +39,7 @@ def page_not_found(_):
         missing=random.choice(possible_missings),
     ), 404
 
-def get_files(path, extension):
-    return [
-        f
-        for f in os.listdir(path)
-        if os.path.isfile(os.path.join(path, f)) and f.endswith(extension)
-    ]
-
-def get_key():
+def get_key() -> Optional[str]:
     try:
         return session['key']
     except KeyError:
@@ -56,34 +58,42 @@ def redirect_dest(fallback):
         return redirect(fallback)
     return redirect(dest_url)
 
-def get_neighbours(filename, path, extension):
-    files = sorted(get_files(path, extension))
+def get_neighbours(filename: str, category: str):
+    config = get_config()
+    files = sorted(config.get_files(category))
 
     neighbours = list()  # ['<prev>.jrl', '<next>.jrl']
     file_index = files.index(filename)
-    neighbours.append(None if file_index == 0              else files[file_index - 1])
-    neighbours.append(None if file_index == len(files) - 1 else files[file_index + 1])
+    neighbours.append(None if not file_index else files[file_index - 1])
+    neighbours.append(None if file_index == len(files) - 1
+                           else files[file_index + 1])
 
     return neighbours
 
 @app.route("/")
 def index():
     menu = dict()
+    config = get_config()
 
     # Generate a decrypt function
-    key: Optional[str] = get_key()
-    decrypt_func: Optional[Callable[[str], str]] = \
-        get_decrypt_func(key) if key is not None else None
+    key = get_key()
+    decrypt_func = get_decrypt_func(key) if key else None
 
     # Prepare menu
-    for handle in get_handles():
-        cat = handle.get_category()
+    for cat in config.get_categories():
         menu[cat] = dict()
 
-        for file in sorted(get_files(handle.get_path(), handle.get_extension()), reverse=True):
-            handle.set_filename(handle.get_path() + os.sep + file)
+        for file in sorted(config.get_files(cat), reverse=True):
+            handle = Article(
+                config.get_path(cat) + os.sep + file,
+                skipbody=True
+            )
             handle.read_file(decrypt=decrypt_func)
-            handle.parse()
+            try:
+                handle.parse()
+            except FileParsingError:
+                menu[cat][file] = ['<Empty File!>']
+                continue
             menu[cat][file] = handle.get_title()
 
     return render_template('index.html',
@@ -93,38 +103,28 @@ def index():
 
 @app.route("/<filename>")
 def render_article(filename):
-    handler = None
+    config = get_config()
 
-    for handle in get_handles():
-        if filename.endswith(handle.extension):
-            handler = handle
-            break
+    cat = config.get_category_from_filename(filename)
+    if not cat:
+        abort(404);
 
-    if not handler:
-        abort(404)
-
-    file_path = handler.get_path()
-    if not file_path.endswith(os.sep):
-        file_path += os.sep
-    file_path += filename
-
+    file_path = os.path.join(config.get_path(cat), filename)
     if not os.path.exists(file_path):
         abort(404)
 
-    handler.set_filename(file_path)
+    handler = Article(file_path)
 
     key: Optional[str] = get_key()
-    handler.read_file(
-        decrypt=get_decrypt_func(key) if key is not None else None
-    )
+    handler.read_file(decrypt=get_decrypt_func(key) if key else None)
 
     handler.parse()
     handler.to_html()
 
-    prev, next = get_neighbours(filename, handler.get_path(), handle.get_extension())
+    prev, next = get_neighbours(filename, cat)
 
     return render_template("article.html",
-        filename=handler.get_filename(),
+        filename=filename,
         title=handler.get_title(),
         body=handler.get_html_paragraphs(),
         date=handler.get_date('%B %d, %Y -- %A'),
@@ -142,8 +142,7 @@ def enter_key():
         # '\d' pulls out all numeric characters
         key_regex = re.compile('[\W\d_]+')
         key = key_regex.sub('', request.form['key'].lower())
-        if key:
-            session['key'] = key
+        if key: session['key'] = key
 
         return redirect_dest(fallback=url_for('index'))
 

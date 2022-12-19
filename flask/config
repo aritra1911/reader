@@ -1,8 +1,8 @@
 # Lines begining with `#` are ignored,
 # but `#` in the middle of a line doesn't make sense yet.
 
-#Subject:Path:Extension
-Journal Entries:~/journals:.jrl
-#Stories:~/stories:.stry
-#Poems:~/poems:.pm
+#Subject:Path:Pattern
+Journal Entries:~/journals:*.jrl, *.txt
+Stories:~/stories:*.stry
+#Poems:~/poems:*.pm
 #Ideas:~/ideas:.dea

@@ -1,15 +1,17 @@
 from .article import Article
-
+from typing import List, Optional
+from os import walk
+from os.path import expanduser
+import fnmatch
 
 class ConfigParser:
-    def __init__(self, file=None):
+    def __init__(self, file: str=None):
         if file is not None:
             self.parse_config(file)
 
-
-    def parse_config(self, file):
+    def parse_config(self, file: str):
         with open(file) as config_file:
-            self.configs = list()
+            self.config = dict()
 
             for line in config_file.readlines():
                 line = line.strip()
@@ -21,22 +23,52 @@ class ConfigParser:
 
                 # TODO: What happens in case of a failed parse
                 #       due to a syntax error?
-                cat, path, ext = line.split(':')
-                self.configs.append({
-                    "category": cat,
+                cat, path, pats = line.split(':')
+                cat = cat.strip()
+                path = path.strip()
+                if path.startswith('~'): path = expanduser(path)
+                pats = list(map(str.strip, pats.split(',')))
+                self.config[cat] = {
                     "path": path,
-                    "extension": ext,
-                })
+                    "patterns": pats,
+                }
 
+    def get_categories(self) -> [str]:
+        return list(self.config.keys())
 
-    def get_instances(self):
-        article_instances = list()
+    def get_path(self, cat: str) -> str:
+        return self.config[cat]['path']
 
-        for config in self.configs:
-            article_instances.append(Article(
-                category=config["category"],
-                path=config["path"],
-                extension=config["extension"],
-            ))
+    def get_patterns(self, cat: str) -> str:
+        return self.config[cat]['patterns']
 
-        return article_instances
+    def get_files(self, cat: str) -> List[str]:
+        files = list()
+
+        try:
+            files = next(walk(self.config[cat]['path']))[2]
+        except StopIteration:
+            return []
+
+        return list(filter(lambda file: any([
+            fnmatch.fnmatchcase(file, pattern)
+            for pattern in self.config[cat]['patterns']
+        ]), files))
+
+    def get_category_from_filename(self, filename: str) -> Optional[str]:
+        for cat in self.config.keys():
+            if any([ fnmatch.fnmatchcase(filename, pattern)
+                     for pattern in self.config[cat]['patterns'] ]):
+                return cat
+        return None
+
+#    def get_instances(self):
+#        article_instances = list()
+#
+#        for config in self.configs:
+#            article_instances.append(Article(
+#                category=config["category"],
+#                path=config["path"],
+#            ))
+#
+#        return article_instances
