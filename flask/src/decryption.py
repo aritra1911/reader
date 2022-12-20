@@ -2,9 +2,8 @@ from typing import List, Optional, Callable
 
 def cycle(ref: str, word: str) -> List[str]:
     res: List[str] = list()
-    i: int = 0
+    i = 0
 
-    c: str
     for c in ref:
         if c.isalpha():
             res.append(word[i])

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>500: Internal Server Error</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  </head>
+
+  <body class=nightmare>
+    <div style="  position: relative;
+                    margin: 16px 0 16px 0;
+                text-align: center;">
+      <div style="  position: relative;
+                      margin: auto;
+                  text-align: center;
+                       width: 640px">
+        <img src={{ url_for('static', filename='err_500.png') }}
+             style="padding: 64px 0 64px 0;"
+             width=400px/>
+        <img src={{ url_for('static', filename='Fright+0019.jpg') }}
+             width=480px />
+        <h2>Who broke the server again?</h2>
+        <h3>Could it be this girl?</h3>
+        <img src={{ url_for('static', filename='hacker-girl.jpg') }}
+             width=480px />
+        <div style="text-align: justify;">
+          This matrix girl here might look like she's fixing things,
+          but in reality she has no idea what she's doing! If you want
+          speedy recovery of the server, please throw the lonely and
+          unaware technical monkey maintaining it an email yelling
+          something like
+          <blockquote>
+            &ldquo;HEY ASSHOLE! YOUR SERVER IS FUCKED UP AGAIN!! THIS
+            IS THE 420<sup>TH</sup> TIME IT BROKE THIS WEEK! ARE YOU
+            ACTUALLY TESTING YOUR SHIT IN PRODUCTION?? FIX YOUR GODDAMN
+            SERVER YOU FUCKING IDIOT!&rdquo;
+          </blockquote>
+          to <a href="mailto:aritra1911@yahoo.com">aritra1911@yahoo.com</a> and
+          wait for him to get to it.
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
