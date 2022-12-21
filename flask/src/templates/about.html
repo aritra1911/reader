@@ -3,18 +3,22 @@
 {% block header %}<h2>Journal Reader</h2>{% endblock header %}
 {% block content %}
   <p>
-    Parses a properly formatted .jrl file and enables reading it in a more<br />
+    Parses a properly formatted file and enables reading it in a more
     comfortable manner with colors that are not black and white like a
-    terminal<br />window. Be sure to put on some music that matches the feels.
+    terminal window.&nbsp;&nbsp;Be sure to put on some music that
+    matches the feels.
   </p>
   <p>
-    There is an encryption algorithm implemented, guarded by a key. If you
-    are<br />looking for one, chances are that you're somewhere you shouldn't be.
-    Be a<br />good person and respect other's privacy.<br /><br />
-    <small>The code is open source! Figure out the algorithm and brute force
-    the<br />key. Or better if a ton of data is available, make out the key from
-    the<br />data like a real cryptographer. The algorithm is quite simple.
-    </small>
+    There is an encryption algorithm implemented, guarded by a key.
+    &nbsp;&nbsp;If you are looking for one, chances are that you're
+    somewhere you shouldn't be.&nbsp;&nbsp;Be a good person and respect
+    others' privacy.
+    <blockquote class="small">
+      The code is open source!&nbsp;&nbsp;Figure out the algorithm
+      and brute force the key.&nbsp;&nbsp;Or better if a ton of data
+      is available, make out the key from the data like a real
+      cryptographer.&nbsp;&nbsp;The algorithm is quite simple.
+    </blockquote>
   </p>
   <p>
     This project is
@@ -22,9 +26,9 @@
        href="https://github.com/aritra1911/reader">open source</a>.
   </p>
   <p>
-    Designed and developed with <span style="color: #b94681;">&#9829;</span> by
-    Aritra Sarkar.<br />
-    My email : <i style="color: #138667">aritra1911@yahoo.com</i>
+    Designed and developed with <span style="color: #b94681;">&#9829;
+    </span> by Aritra Sarkar.<br />Email at:
+    <a href="mailto:aritra1911@yahoo.com">aritra1911@yahoo.com</a>
   </p>
   <br />
   <p>
@@ -39,11 +43,13 @@
           Uptime : {{ uptime }}</pre>
 
     {% if py_releaselevel != 'final' %}
-    <small>Seems like this is working well on
+    <blockquote class="small">
+      Seems like this is working well on
       {{ 'an' if py_releaselevel =='alpha' else 'a' }} {{ py_releaselevel }}
-      release.  You might still wanna<br />check the other pages and try to
-      break something. Upon successfully<br />breaking something, report the
-      issue to whomever it may concern.</small>
+      release.&nbsp;&nbsp;You might still wanna check the other pages
+      and try to break something.&nbsp;&nbsp;Upon successfully breaking
+      something, report the issue to whomever it may concern.
+    </blockquote>
     {% endif %}
   </p>
 {% endblock content %}

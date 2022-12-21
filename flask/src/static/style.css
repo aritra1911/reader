@@ -1,6 +1,6 @@
 body {
-  margin: 0;
-  padding: 0;
+  margin: 0 auto;
+  padding: 0 16px 16px 16px;
   font-family: "Georgia", serif;
 }
 
@@ -12,7 +12,6 @@ body.nice {
 body.nightmare {
   background-color: #000000;
   color: #aa0000;
-  font-size: x-large;
 }
 
 a {
@@ -33,6 +32,17 @@ h4 {
 ul {
   margin-top: 8px;
   padding-left: 20px;
+}
+
+p {
+  text-align: justify;
+}
+
+blockquote.small {
+  width: 256px;
+  line-height: 1em;
+  text-align: justify;
+  font-size: xx-small;
 }
 
 .sidenav {
@@ -59,22 +69,16 @@ ul {
 }
 
 #content-wrap {
-  margin-top: 16px;
-  margin-bottom: 16px;
-  margin-left: 16px;
-  margin-right: 192px;
+  position: relative;
+  margin: 0 auto;
+  padding: 4px 192px 0px 192px;
+  max-width: 600px;
 }
 
 .centered {
   position: relative;
   text-align: center;
-}
-
-.child {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(0, +50%);
+  margin: auto;
 }
 
 @media screen and (max-height: 450px) {

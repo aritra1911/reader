@@ -121,6 +121,9 @@ class Article:
                 html_line = html_line.replace('<', '&lt;')
                 html_line = html_line.replace('>', '&gt;')
 
+                # correctly render even number of spaces
+                html_line = html_line.replace(' '*2, '&nbsp;'*2)
+
                 # replaces all tabs with 4 spaces
                 html_line = html_line.replace('\t', '&nbsp;'*4)
 
