@@ -32,16 +32,18 @@
     <pre>
         Software : {{ server }}
           System : {{ os_uname.sysname }}
-         Release : {{ os_uname.release }}
+         Version : {{ os_uname.release }}
             Arch : {{ os_uname.machine }}
           Python : {{ py_version }}
-           Flask : {{ flask_version }}</pre>
+           Flask : {{ flask_version }}
+          Uptime : {{ uptime }}</pre>
 
     {% if py_releaselevel != 'final' %}
-      <small>Seems like this is working well on a {{ py_releaselevel }} release.
-      You still might wanna<br /> check the other pages and try to break
-      something. Upon successfully<br /> breaking something, report the issue to
-      whomever it may concern.</small>
+    <small>Seems like this is working well on
+      {{ 'an' if py_releaselevel =='alpha' else 'a' }} {{ py_releaselevel }}
+      release.  You might still wanna<br />check the other pages and try to
+      break something. Upon successfully<br />breaking something, report the
+      issue to whomever it may concern.</small>
     {% endif %}
   </p>
 {% endblock content %}

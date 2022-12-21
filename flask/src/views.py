@@ -8,14 +8,63 @@ from flask import (
 )
 from flask import __version__ as flask_version
 from typing import List, Optional
-import random
-import fnmatch
-import os
-import re
-import sys
+import random, fnmatch, psutil, os, time, re, sys
+
+def get_uptime() -> str:
+    secs = int(time.time() - psutil.Process(os.getpid()).create_time())
+
+    days  = secs // 86400
+    secs %= 86400
+
+    hour  = secs // 3600
+    secs %= 3600
+
+    mins  = secs // 60
+    secs %= 60
+
+    uptime: List[str] = list()
+    for (num, name) in [ (days, 'day'), (hour, 'hour'),
+                         (mins, 'min'), (secs,  'sec') ]:
+        if num:
+            temp = str(num) + ' ' + name
+            if num > 1: temp += 's'
+            uptime.append(temp)
+
+    return '  '.join(uptime)
 
 def get_config() -> ConfigParser:
     return ConfigParser(CONFIG_FILE)
+
+def get_key() -> Optional[str]:
+    try:
+        return session['key']
+    except KeyError:
+        return None
+
+def get_neighbours(filename: str, category: str):
+    config = get_config()
+    files = sorted(config.get_files(category))
+
+    neighbours = list()  # ['<prev>.jrl', '<next>.jrl']
+    file_index = files.index(filename)
+    neighbours.append(None if not file_index else files[file_index - 1])
+    neighbours.append(None if file_index == len(files) - 1
+                           else files[file_index + 1])
+
+    return neighbours
+
+def redirect_dest(fallback):
+    kwargs = request.args.copy()
+    try:
+        dest = kwargs.pop('next')
+    except KeyError:
+        dest = None
+
+    try:
+        dest_url = url_for(dest, **kwargs)
+    except TypeError:
+        return redirect(fallback)
+    return redirect(dest_url)
 
 @app.errorhandler(500)
 def internal_server_error(_):
@@ -36,37 +85,6 @@ def page_not_found(_):
     return render_template('404.html',
         missing=random.choice(possible_missings),
     ), 404
-
-def get_key() -> Optional[str]:
-    try:
-        return session['key']
-    except KeyError:
-        return None
-
-def redirect_dest(fallback):
-    kwargs = request.args.copy()
-    try:
-        dest = kwargs.pop('next')
-    except KeyError:
-        dest = None
-
-    try:
-        dest_url = url_for(dest, **kwargs)
-    except TypeError:
-        return redirect(fallback)
-    return redirect(dest_url)
-
-def get_neighbours(filename: str, category: str):
-    config = get_config()
-    files = sorted(config.get_files(category))
-
-    neighbours = list()  # ['<prev>.jrl', '<next>.jrl']
-    file_index = files.index(filename)
-    neighbours.append(None if not file_index else files[file_index - 1])
-    neighbours.append(None if file_index == len(files) - 1
-                           else files[file_index + 1])
-
-    return neighbours
 
 @app.route("/")
 def index():
@@ -159,4 +177,5 @@ def about():
         py_version=sys.version,
         py_releaselevel=sys.version_info.releaselevel,
         flask_version=flask_version,
+        uptime=get_uptime(),
     )
