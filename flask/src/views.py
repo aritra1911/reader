@@ -7,7 +7,7 @@ from flask import (
     render_template, request, session, url_for, redirect, abort
 )
 from flask import __version__ as flask_version
-from typing import List, Optional
+from typing import List, Optional, Dict
 import random, fnmatch, psutil, os, time, re, sys
 
 def get_uptime() -> str:
@@ -41,11 +41,11 @@ def get_key() -> Optional[str]:
     except KeyError:
         return None
 
-def get_neighbours(filename: str, category: str):
+def get_neighbours(filename: str, category: str) -> List[Optional[str]]:
     config = get_config()
     files = sorted(config.get_files(category))
 
-    neighbours = list()  # ['<prev>.jrl', '<next>.jrl']
+    neighbours: List[Optional[str]] = list()  # ['<prev>.jrl', '<next>.jrl']
     file_index = files.index(filename)
     neighbours.append(None if not file_index else files[file_index - 1])
     neighbours.append(None if file_index == len(files) - 1
@@ -80,7 +80,7 @@ def page_not_found(_):
         possible_missings = [ m.strip() for m in possible_missings ]
 
     except FileNotFoundError:
-        possible_missings = 'File'
+        possible_missings = ['File']
 
     return render_template('404.html',
         missing=random.choice(possible_missings),
@@ -88,7 +88,7 @@ def page_not_found(_):
 
 @app.route("/")
 def index():
-    menu = dict()
+    menu: Dict[str, Dict[str, List[str]]] = dict()
     config = get_config()
 
     # Generate a decrypt function

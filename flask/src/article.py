@@ -1,7 +1,7 @@
 import re
 import os
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 class FileParsingError(Exception):
     pass
@@ -10,7 +10,7 @@ class FileTypeError(Exception):
     pass
 
 class Article:
-    def __init__(self, filepath: str=None, skipbody: bool=False):
+    def __init__(self, filepath: Optional[str]=None, skipbody: bool=False):
         if filepath is not None:
             self.set_filepath(filepath)
         self.skipbody = skipbody
@@ -26,7 +26,7 @@ class Article:
         except ValueError:
             return None
 
-    def get_title(self):
+    def get_title(self) -> List[str]:
         return self.title
 
     def get_paragraphs(self):
@@ -58,7 +58,7 @@ class Article:
             except IndexError:
                 raise FileParsingError("Empty file supplied")
 
-        self.title = list()
+        self.title: List[str] = list()
 
         title_regex_single = re.compile(r'"(.*)"|# (.*)')
         title_regex_multi_beg = re.compile(r'"(.*)')
@@ -100,13 +100,13 @@ class Article:
         # a supposed hack in order to save me a block of code repetition. You
         # can see this blank line as the null terminating character of a string
         # in C.
-        self.paragraphs = list()
-        paragraph = list()
+        self.paragraphs: List[List[str]] = list()
+        paragraph: List[str] = list()
         for line in lines:
             if not len(line):
                 if len(paragraph):
                     self.paragraphs.append(paragraph)
-                    paragraph = list()
+                    paragraph.clear()
             else:
                 paragraph.append(line)
 

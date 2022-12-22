@@ -5,7 +5,7 @@ from os.path import expanduser
 import fnmatch
 
 class ConfigParser:
-    def __init__(self, file: str=None):
+    def __init__(self, file: Optional[str]=None):
         if file is not None:
             self.parse_config(file)
 
@@ -27,13 +27,13 @@ class ConfigParser:
                 cat = cat.strip()
                 path = path.strip()
                 if path.startswith('~'): path = expanduser(path)
-                pats = list(map(str.strip, pats.split(',')))
+                patterns = list(map(str.strip, pats.split(',')))
                 self.config[cat] = {
                     "path": path,
-                    "patterns": pats,
+                    "patterns": patterns,
                 }
 
-    def get_categories(self) -> [str]:
+    def get_categories(self) -> List[str]:
         return list(self.config.keys())
 
     def get_path(self, cat: str) -> str:
@@ -61,14 +61,3 @@ class ConfigParser:
                      for pattern in self.config[cat]['patterns'] ]):
                 return cat
         return None
-
-#    def get_instances(self):
-#        article_instances = list()
-#
-#        for config in self.configs:
-#            article_instances.append(Article(
-#                category=config["category"],
-#                path=config["path"],
-#            ))
-#
-#        return article_instances
