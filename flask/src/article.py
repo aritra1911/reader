@@ -106,7 +106,7 @@ class Article:
             if not len(line):
                 if len(paragraph):
                     self.paragraphs.append(paragraph)
-                    paragraph.clear()
+                    paragraph = list()
             else:
                 paragraph.append(line)
 
