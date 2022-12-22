@@ -1,9 +1,15 @@
 {% extends "centered.html" %}
-{% block title %}404{% endblock title %}
+{% block title %}404 : Not Found{% endblock title %}
 {% block bodyclass %}nightmare{% endblock bodyclass %}
-{% block header %}<h1>Error 404!</h1>{% endblock header %}
+{% block header %}
+  <h1 style="padding: 96px 0 32px 0;">ERROR 404!</h1>
+  <img src={{ url_for('static', filename='Tominos_Hell.jpg') }}
+       alt='> tominos-hell.jpg' style="padding: 16px 0;" width=400px />
+  <br />
+{% endblock header %}
 {% block content %}
-<del><font color="#660000">Page</font></del> <ins>{{ missing }}</ins> not found!
+  <del><font color="#660000">Page</font></del>
+  <ins>{{ missing }}</ins> not found!
 {% endblock content %}
 {% block sidebarlinks %}
   <a href="{{ url_for('index') }}">Index</a>
