@@ -2,13 +2,13 @@
 {% block title %}500: Internal Server Error{% endblock title %}
 {% block bodyclass %}nightmare{% endblock bodyclass %}
 {% block header %}
-  <img src={{ url_for('static', filename='err_500.png') }}
-       alt="err_500.png" style="padding: 96px 0 64px 0;" width=460px />
+  <img src={{ url_for('static', filename='err_500.png') }} alt="err_500.png"
+       style="padding: 96px 0 64px 0; max-width: 76%;" />
   <h1 style="margin-top: 0;">DAMN IT!&nbsp;&nbsp;YOU BROKE THE SERVER!</h1>
 {% endblock header %}
 {% block content %}
   <img src={{ url_for('static', filename='Fright+0019.jpg') }}
-       alt='> broken-girl.jpg' width=600px />
+       alt='> broken-girl.jpg' style="max-width: 100%;" />
   <p>Actually, you just stumbled upon an existing bug, so good
   job!&nbsp;&nbsp;Technical monkeys such as the girl from the matrix
   below should have already started working on fixing this bug.&nbsp;
@@ -16,7 +16,7 @@
   href="mailto:aritra1911@yahoo.com">aritra1911@yahoo.com</a> with a
   description of the bug.</p>
   <img src={{ url_for('static', filename='hacker-girl.jpg') }}
-       alt="> matrix-girl.jpg" width=600px />
+       alt="> matrix-girl.jpg" style="max-width: 100%;" />
   <blockquote class="small">
     The girl above might look like she's fixing things, but in reality
     she has no idea what she's doing!&nbsp;&nbsp;Hence it's all on the
