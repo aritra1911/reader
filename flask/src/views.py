@@ -33,7 +33,13 @@ def get_uptime() -> str:
     return '  '.join(uptime)
 
 def get_config() -> ConfigParser:
-    return ConfigParser(CONFIG_FILE)
+    #
+    # Check the path from `CONFIG_FILE' first and if that doesn't exist,
+    # drop the absolute path and pass a relative path instead containing
+    # just the filename
+    #
+    return ConfigParser(CONFIG_FILE) if os.path.exists(CONFIG_FILE) \
+        else ConfigParser(os.path.basename(CONFIG_FILE))
 
 def get_key() -> Optional[str]:
     try:
@@ -73,7 +79,8 @@ def internal_server_error(_):
 @app.errorhandler(404)
 def page_not_found(_):
     try:
-        with open(MISSINGS_FILE) as missings_file:
+        with open(MISSINGS_FILE if os.path.exists(MISSINGS_FILE)
+                else os.path.basename(MISSINGS_FILE)) as missings_file:
             possible_missings = missings_file.readlines()
 
         # removes whitespace characters like `\n` at the end of each line

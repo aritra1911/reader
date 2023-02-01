@@ -24,7 +24,7 @@
 {% block sidebarlinks %}
   <a href="{{
     url_for('enter_key', next=request.endpoint, **request.view_args)
-  }}">Enter Key</a>
+    }}">{{ 'Enter Key' if not key_exists else 'Substitute Key' }}</a>
 
   {% if key_exists %}
     <a href="{{
