@@ -34,9 +34,8 @@
   <p>
     <h4>Server Info:</h4>
     <pre>
-        Software : {{ server }}
-          System : {{ os_uname.sysname }}
-         Version : {{ os_uname.release }}
+        Software : {{ server if server else '<i>Unknown</i>' }}
+          System : {{ os_uname.sysname }} {{ os_uname.release }}
             Arch : {{ os_uname.machine }}
           Python : {{ py_version }}
            Flask : {{ flask_version }}
